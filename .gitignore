@@ -9,5 +9,10 @@ wheels/
 # Virtual environments
 .venv
 
+# Dot env
+.env
+
+# Custom
 data/*
+
 .DS_Store
