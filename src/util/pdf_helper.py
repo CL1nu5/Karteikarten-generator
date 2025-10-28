@@ -2,7 +2,7 @@ import os
 from pdf2image import convert_from_path
 from loguru import logger
 
-def pdfs_to_images(source_folder: str, target_folder: str, dpi: int = 600):
+def pdfs_to_images(source_folder: str, target_folder: str, dpi: int = 150):
     # Sicherstellen, dass Zielordner existiert
     os.makedirs(target_folder, exist_ok=True)
 

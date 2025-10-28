@@ -12,6 +12,7 @@ dependencies = [
     "opencv-python>=4.12.0.88",
     "pdf2image>=1.17.0",
     "pygame>=2.6.1",
+    "segment-anything",
     "setuptools>=80.9.0",
     "torch>=2.9.0",
     "torchaudio>=2.9.0",
@@ -20,3 +21,4 @@ dependencies = [
 
 [tool.uv.sources]
 detectron2 = { git = "https://github.com/facebookresearch/detectron2.git" }
+segment-anything = { git = "https://github.com/facebookresearch/segment-anything.git" }
