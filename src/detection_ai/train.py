@@ -34,6 +34,7 @@ def create_data_yaml(dataset_dir: str, class_names: list):
 def train_yolo_model(
     dataset_dir="data/ai/yolo_split",
     class_names=None,
+    resume=False,
     model_name="yolov8m.pt",
     epochs=50,
     imgsz=640,
@@ -66,6 +67,7 @@ def train_yolo_model(
     print("🚀 Starte Training ...")
     results = model.train(
         data=data_yaml,
+        resume=resume,
         epochs=epochs,
         imgsz=imgsz,
         device=device,
@@ -88,8 +90,9 @@ if __name__ == "__main__":
     train_yolo_model(
         dataset_dir="data/ai/yolo_split",  
         class_names=["logic-component", "logic-block"],  
-        model_name="yolov8m.pt",  
+        resume=False,
+        model_name="yolo11m.pt",  
         epochs=100,
-        imgsz=1280,
+        imgsz=640,
         device="mps",  
     )

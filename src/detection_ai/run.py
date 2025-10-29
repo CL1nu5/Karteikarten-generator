@@ -43,8 +43,8 @@ def predict_and_show(model_path: str, image_path: str, save_result: bool = False
 
 if __name__ == "__main__":
     # 🔧 HIER kannst du einfach deine Pfade eintragen:
-    model_path = "runs/train/yolo_split_run3/weights/best.pt"
-    image_path = "data/ai/yolo_split/train/images/6d59dd75-page_00003.png"
+    model_path = "runs/train/yolo_split_run5/weights/best.pt"
+    image_path = "data/ai/yolo_split/test/images/87f79a1b-page_00002.png"
     save_result = False  # auf False setzen, wenn du nicht speichern willst
 
     predict_and_show(model_path, image_path, save_result)

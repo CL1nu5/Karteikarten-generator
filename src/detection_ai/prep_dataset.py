@@ -8,8 +8,8 @@ def adjust_label_classes(label_path: Path, out_path: Path):
     """
     Liest eine YOLO-Labeldatei und schreibt sie neu mit angepassten Klassen-IDs.
     Mapping:
-      1, 2 -> 0
-      3    -> 1
+      1, 3 -> 0
+      2    -> 1
       andere bleiben gleich
     """
     if not label_path.exists():
@@ -23,9 +23,9 @@ def adjust_label_classes(label_path: Path, out_path: Path):
                 continue
             cls = int(parts[0])
             # Mapping anwenden
-            if cls in [1, 2]:
+            if cls in [1, 3]:
                 cls = 0
-            elif cls == 3:
+            elif cls == 2:
                 cls = 1
             # Rest unverändert
             new_line = " ".join([str(cls)] + parts[1:])
