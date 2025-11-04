@@ -6,6 +6,8 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "detectron2",
+    "dotenv>=0.9.9",
+    "google-genai>=1.48.0",
     "layoutparser[layoutmodels,ocr]>=0.3.4",
     "loguru>=0.7.3",
     "ollama>=0.6.0",
