@@ -5,6 +5,16 @@ from loguru import logger
 
 class ConfigLoader:
 
+    """
+    Configuration loader to manage toml config file, env keys and toml chache files. 
+    To crate it, you have to provide the path to the toml config file.
+
+    Methods to interact with:
+        - reload: reloads the config file and env values, as well as the cache files
+        - cache values: this method, allows you to cache key value pairs -> provide the key in a "." splitted form, e.g. "SECTION.SUBSECTION.KEY"
+        - to_dict: returns the full config as a flatend dictionary
+    """
+
     ### initialize and reload config ###
 
     def __init__(self, config_path='config/config.toml') -> None:
@@ -46,7 +56,7 @@ class ConfigLoader:
     ### load chace files ###
 
     # recursivley merge dictionarys without overwriting existing keys
-    def _merge_dict_no_overwrite(self, base: dict, updates: dict, wrap_key: str | None = None):
+    def _merge_dict_no_overwrite(self, base: dict, updates: dict, wrap_key: str | None = None) -> None:
 
         # Handle wrap_key if provided (put key infront of evry merged key)
         if wrap_key:
@@ -66,13 +76,35 @@ class ConfigLoader:
     # add cache files to the config by merging them into self._config
     def _add_cache_config(self) -> None:
         cahe_paths = self._config["GENENERAL_CONFIGURATION"]["CACHE_FILES"]
-
-        for cache_path in cahe_paths:
+        print(cahe_paths)
+        for _, cache_path in cahe_paths.items():
             try:
                 cache_keys = self._load_toml(cache_path)
                 self._merge_dict_no_overwrite(self._config, cache_keys, wrap_key="CACHE")
             except FileNotFoundError:
                 logger.warning(f"Cache file not found: {cache_path}")
+    
+    # cache multiple values to a toml file by file path and list of (key, value) pairs
+    def cache_values(self, path: str, items: list[tuple[str, object]]) -> None:
+        if not isinstance(items, list):
+            raise TypeError("items must be a list of (key, value) pairs")
+
+        data = self._load_toml(path)
+
+        for key_path, value in items:
+            if not isinstance(key_path, str):
+                raise TypeError("Each key must be a string")
+
+            parts = key_path.split(".")
+            current = data
+            for part in parts[:-1]:
+                if part not in current or not isinstance(current[part], dict):
+                    current[part] = {}
+                current = current[part]
+            current[parts[-1]] = value
+
+        with open(path, "w", encoding="utf-8") as f:
+            toml.dump(data, f)
     
 
 
@@ -94,4 +126,3 @@ class ConfigLoader:
     def to_dict(self) -> dict:
         self._config_keys = self._flatten_dict(self._config)
         return self._config_keys.copy()
-    

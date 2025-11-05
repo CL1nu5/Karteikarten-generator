@@ -2,9 +2,9 @@
 ENV_VALUES = [
     "GEMINI_API_KEY"
 ]
-CACHE_FILES = [
-    "config/.chache_files/trasformation_cache.toml"
-]
+
+[GENENERAL_CONFIGURATION.CACHE_FILES]
+TRANSFORMATION = "config/.chache_files/trasformation_cache.toml"
 
 [FILE_PATHS]
 PDFS_TO_PROCESS = "data/pdfs_to_process/"
