@@ -1,4 +1,20 @@
-test_value_3 = 124
-
-[test.hallo]
-test = true
+[CONVERTED_IMAGES]
+"data/processed/data/to_process/Softwareentwicklung/page_00001.png" = "data/to_process/Softwareentwicklung.pdf"
+"data/processed/data/to_process/Softwareentwicklung/page_00002.png" = "data/to_process/Softwareentwicklung.pdf"
+"data/processed/data/to_process/Softwareentwicklung/page_00003.png" = "data/to_process/Softwareentwicklung.pdf"
+"data/processed/data/to_process/Analysis/page_00001.png" = "data/to_process/Analysis.pdf"
+"data/processed/data/to_process/Analysis/page_00002.png" = "data/to_process/Analysis.pdf"
+"data/processed/data/to_process/Analysis/page_00003.png" = "data/to_process/Analysis.pdf"
+"data/processed/data/to_process/Analysis/page_00004.png" = "data/to_process/Analysis.pdf"
+"data/processed/data/to_process/Analysis/page_00005.png" = "data/to_process/Analysis.pdf"
+"data/processed/data/to_process/Technische Informatik/page_00001.png" = "data/to_process/Technische Informatik.pdf"
+"data/processed/data/to_process/Technische Informatik/page_00002.png" = "data/to_process/Technische Informatik.pdf"
+"data/processed/data/to_process/Technische Informatik/page_00003.png" = "data/to_process/Technische Informatik.pdf"
+"data/processed/data/to_process/Technische Informatik/page_00004.png" = "data/to_process/Technische Informatik.pdf"
+"data/processed/data/to_process/Technische Informatik/page_00005.png" = "data/to_process/Technische Informatik.pdf"
+"data/processed/data/to_process/Technische Informatik/page_00006.png" = "data/to_process/Technische Informatik.pdf"
+"data/processed/data/to_process/Lineare Algebra/page_00001.png" = "data/to_process/Lineare Algebra.pdf"
+"data/processed/data/to_process/Lineare Algebra/page_00002.png" = "data/to_process/Lineare Algebra.pdf"
+"data/processed/data/to_process/Lineare Algebra/page_00003.png" = "data/to_process/Lineare Algebra.pdf"
+"data/processed/data/to_process/Lineare Algebra/page_00004.png" = "data/to_process/Lineare Algebra.pdf"
+"data/processed/data/to_process/Lineare Algebra/page_00005.png" = "data/to_process/Lineare Algebra.pdf"

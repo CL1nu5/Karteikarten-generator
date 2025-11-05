@@ -6,7 +6,13 @@ ENV_VALUES = [
 [GENENERAL_CONFIGURATION.CACHE_FILES]
 TRANSFORMATION = "config/.chache_files/trasformation_cache.toml"
 
+[PROCESS_SETTINGS]
+CACHE_PDF_TO_IMAGE_CREATION = true
+
 [FILE_PATHS]
 PDFS_TO_PROCESS = "data/pdfs_to_process/"
 PROCESSED_PDFS = "data/processed_pdfs/"
 DETECTED_DATA= "data/detections/"
+
+[CHAT_MODELS]
+MODELS = ["gemma3:12b", "gpt-oss:20b"]

@@ -11,7 +11,7 @@ class ConfigLoader:
 
     Methods to interact with:
         - reload: reloads the config file and env values, as well as the cache files
-        - cache values: this method, allows you to cache key value pairs -> provide the key in a "." splitted form, e.g. "SECTION.SUBSECTION.KEY"
+        - cache values: this method, allows you to cache key value pairs -> provide the key in a "_" splitted form, e.g. "SECTION_SUBSECTION_KEY"
         - to_dict: returns the full config as a flatend dictionary
     """
 
@@ -20,6 +20,8 @@ class ConfigLoader:
     def __init__(self, config_path='config/config.toml') -> None:
         self._config_path = config_path
         self.reload()
+
+        logger.info(f"✅ Configuration loaded from {config_path}")
 
     def reload(self, config_path: str = None) -> None:
         if config_path is None:
@@ -76,7 +78,7 @@ class ConfigLoader:
     # add cache files to the config by merging them into self._config
     def _add_cache_config(self) -> None:
         cahe_paths = self._config["GENENERAL_CONFIGURATION"]["CACHE_FILES"]
-        print(cahe_paths)
+        
         for _, cache_path in cahe_paths.items():
             try:
                 cache_keys = self._load_toml(cache_path)
@@ -85,9 +87,14 @@ class ConfigLoader:
                 logger.warning(f"Cache file not found: {cache_path}")
     
     # cache multiple values to a toml file by file path and list of (key, value) pairs
-    def cache_values(self, path: str, items: list[tuple[str, object]]) -> None:
+    def cache_values(self, path: str, items: list[tuple[str, object]], split_char: str | None = "_", split: bool = True) -> None:
         if not isinstance(items, list):
             raise TypeError("items must be a list of (key, value) pairs")
+
+        os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+        if not os.path.exists(path):
+            with open(path, "w", encoding="utf-8") as f:
+                f.write("")
 
         data = self._load_toml(path)
 
@@ -95,7 +102,11 @@ class ConfigLoader:
             if not isinstance(key_path, str):
                 raise TypeError("Each key must be a string")
 
-            parts = key_path.split(".")
+            if split and split_char is not None:
+                parts = key_path.split(split_char)
+            else:
+                parts = [key_path]
+
             current = data
             for part in parts[:-1]:
                 if part not in current or not isinstance(current[part], dict):
@@ -105,7 +116,9 @@ class ConfigLoader:
 
         with open(path, "w", encoding="utf-8") as f:
             toml.dump(data, f)
-    
+
+        self.reload()
+        logger.info(f"Cached {len(items)} items to {path}")
 
 
     ### load env files ###

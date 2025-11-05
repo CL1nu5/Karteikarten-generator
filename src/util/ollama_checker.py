@@ -8,11 +8,11 @@ def check_ollama_and_models(models: List[str]):
     try:
         subprocess.run(["ollama", "--version"], check=True, capture_output=True, text=True)
     except FileNotFoundError:
-        logger.error("❌ Ollama ist NICHT installiert.")
-        logger.error("➡️  Installiere es über: https://ollama.ai/download")
+        logger.error("❌ Ollama isn't installed on your machine.")
+        logger.error("➡️  Install it here: https://ollama.ai/download")
         return
     except subprocess.CalledProcessError as e:
-        logger.error("⚠️  Ollama konnte nicht korrekt ausgeführt werden:", e)
+        logger.error("⚠️ Ollama coudnt be executed correctly:", e)
         return
 
     # --- Schritt 2: Verfügbare Modelle abrufen ---
@@ -20,14 +20,14 @@ def check_ollama_and_models(models: List[str]):
         result = subprocess.run(["ollama", "list"], check=True, capture_output=True, text=True)
         installed_models = [line.split()[0] for line in result.stdout.strip().split("\n")[1:] if line.strip()]
     except Exception as e:
-        logger.error("❌ Konnte Modellliste nicht abrufen:", e)
+        logger.error("❌ coud't open modellist", e)
         return
 
     # --- Schritt 3: Prüfen, welche Modelle fehlen ---
     missing = [m for m in models if m not in installed_models]
 
     if missing:
-        logger.error("⚠️  Diese Modelle fehlen:", missing)
-        logger.error("➡️  Du kannst sie mit z. B. `ollama pull modelname` installieren.")
+        logger.error("⚠️ These models are missing:", missing)
+        logger.error("➡️ You can install it by executing 'ollama install modelname'.")
     else:
-        logger.info("✅ Alle angegebenen Modelle und ollama sind korrekt installiert.")
+        logger.info("✅ All given models are installed correctly.")
