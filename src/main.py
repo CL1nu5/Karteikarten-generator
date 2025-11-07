@@ -19,17 +19,16 @@ pdf_files = [os.path.join("data/to_process", f) for f in os.listdir("data/to_pro
 if config.get("PROCESS_SETTINGS_CACHE_PDF_TO_IMAGE_CREATION", False):
     pdf_files = load_cached_pdfs(set(pdf_files), config_loader)
 
-# create images and chache them
+# create images and chache them as well as load chached ones
 images = (pdfs_to_images(pdf_files, "data/processed"))
 if config.get("PROCESS_SETTINGS_CACHE_PDF_TO_IMAGE_CREATION", False):
     cache_image_creation(images, config_loader)
+    images = [img_path for img_path, _ in config_loader._config.get("CACHE", {}).get("CONVERTED_IMAGES", {}).items()]
 
-#check_ollama_and_models(["gemma3:12b", "gpt-oss:20b"])
-#images = (pdfs_to_images("data/to_process", "data/processed"))
-#detect_logical_blocks_with_gemini(images, "data/detections", test_mode=True)
+#print(detect_logical_blocks_with_gemini(images, "data/detections", config_loader, test_mode=True))
 
 visualize_bounding_boxes(
-    image_dir="data/processed/Lineare Algebra",
+    image_dir="data/processed/data/to_process/Softwareentwicklung",
     boxes_dir="data/detections",
     output_dir="data/visualizations",
     show=False

@@ -4,19 +4,6 @@ import os
 
 
 def visualize_bounding_boxes(image_dir, boxes_dir, output_dir=None, show=True):
-    """
-    Liest gespeicherte Bounding Boxes ein, zeichnet sie auf den jeweiligen Bildern
-    und zeigt bzw. speichert die Ergebnisse.
-
-    Parameter:
-        image_dir (str): Pfad zum Ordner mit den Originalbildern.
-        boxes_dir (str): Pfad zum Ordner mit den gespeicherten *_boxes.json-Dateien.
-        output_dir (str, optional): Falls angegeben, werden die visualisierten Bilder gespeichert.
-        show (bool): Wenn True, wird das Bild direkt angezeigt.
-
-    Rückgabe:
-        dict: {bildname: pfad_zum_visualisierten_bild}
-    """
     results = {}
     os.makedirs(output_dir, exist_ok=True) if output_dir else None
 
@@ -28,6 +15,7 @@ def visualize_bounding_boxes(image_dir, boxes_dir, output_dir=None, show=True):
         base_name = file_name.replace("_boxes.json", "")
         image_path = os.path.join(image_dir, f"{base_name}.png")
 
+        print(f"Lade Bild: {image_path}")
         if not os.path.exists(image_path):
             print(f"⚠️ Kein passendes Bild gefunden für {file_name}")
             continue

@@ -5,7 +5,7 @@ from util.config_reader import ConfigLoader
 from pathlib import Path
 
 # Convert pdf files to images and save them in the target folder
-def pdfs_to_images(source_pdf_files: set, target_folder: str, dpi: int = 600) -> list[tuple[str, str]]:
+def pdfs_to_images(source_pdf_files: set, target_folder: str, dpi: int = 300) -> list[tuple[str, str]]:
     os.makedirs(target_folder, exist_ok=True)
 
     image_paths = []
