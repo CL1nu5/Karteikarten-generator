@@ -4,47 +4,37 @@ from dotenv import load_dotenv
 from loguru import logger
 
 class ConfigLoader:
-
     """
-    Configuration loader to manage toml config file, env keys and toml chache files. 
-    To crate it, you have to provide the path to the toml config file.
-
-    Methods to interact with:
-        - reload: reloads the config file and env values, as well as the cache files
-        - cache values: this method, allows you to cache key value pairs -> provide the key in a "_" splitted form, e.g. "SECTION_SUBSECTION_KEY"
-        - to_dict: returns the full config as a flatend dictionary
+    Manages configuration loading from TOML files, environment variables, and cache files.
     """
-
-    ### initialize and reload config ###
 
     def __init__(self, config_path='config/config.toml') -> None:
+        """Initialize with config path and load configuration."""
         self._config_path = config_path
         self.reload()
 
         logger.info(f"✅ Configuration loaded from {config_path}")
 
     def reload(self, config_path: str = None) -> None:
+        """Reloads configuration, env variables, and cache."""
         if config_path is None:
             config_path = self._config_path
 
-        # load toml, env vlaues, cache files and create flattend config
         self._config = self._load_toml(config_path)
         self._load_env()
         self._add_cache_config()
         self._config_keys = self._flatten_dict(self._config)
 
-    ### load tomel file ###
-
-    # load the toml file
     def _load_toml(self, path: str) -> dict:
+        """Loads and parses a TOML file."""
         if not os.path.exists(path):
             raise FileNotFoundError(f"Configuration file not found: {path}")
 
         with open(path, "r", encoding="utf-8") as file:
             return toml.load(file)
 
-    # flatten the tomel key by chnining them together with an underscore "_"
     def _flatten_dict(self, data, parent_key: str="", sep: str="_") -> dict:
+        """Flattens a nested dictionary into a single level with separator-joined keys."""
         items = {}
         for key, value in data.items():
             new_key = f"{parent_key}{sep}{key}" if parent_key else key
@@ -54,13 +44,8 @@ class ConfigLoader:
                 items[new_key] = value
         return items
     
-    
-    ### load chace files ###
-
-    # recursivley merge dictionarys without overwriting existing keys
     def _merge_dict_no_overwrite(self, base: dict, updates: dict, wrap_key: str | None = None) -> None:
-
-        # Handle wrap_key if provided (put key infront of evry merged key)
+        """Recursively merges updates into base dictionary without overwriting existing keys."""
         if wrap_key:
             if wrap_key not in base:
                 base[wrap_key] = updates
@@ -68,15 +53,14 @@ class ConfigLoader:
                 self._merge_dict_no_overwrite(base[wrap_key], updates)
             return
 
-        # Normal recursive merge
         for key, value in updates.items():
             if key not in base:
                 base[key] = value
             elif isinstance(base[key], dict) and isinstance(value, dict):
                 self._merge_dict_no_overwrite(base[key], value)
             
-    # add cache files to the config by merging them into self._config
     def _add_cache_config(self) -> None:
+        """Merges cache files defined in configuration into the main config."""
         cahe_paths = self._config["GENENERAL_CONFIGURATION"]["CACHE_FILES"]
         
         for _, cache_path in cahe_paths.items():
@@ -86,8 +70,8 @@ class ConfigLoader:
             except FileNotFoundError:
                 logger.warning(f"Cache file not found: {cache_path}")
     
-    # cache multiple values to a toml file by file path and list of (key, value) pairs
     def cache_values(self, path: str, items: list[tuple[str, object]], split_char: str | None = "_", split: bool = True) -> None:
+        """Writes key-value pairs to a TOML cache file, optionally splitting keys by separator."""
         if not isinstance(items, list):
             raise TypeError("items must be a list of (key, value) pairs")
 
@@ -120,11 +104,8 @@ class ConfigLoader:
         self.reload()
         logger.info(f"Cached {len(items)} items to {path}")
 
-
-    ### load env files ###
-    
-    # load env values based on the configured env values in the toml file
     def _load_env(self) -> None:
+        """Loads environment variables specified in config into the configuration dictionary."""
         load_dotenv()
         try:
             for key in self._config ["GENENERAL_CONFIGURATION"]["ENV_VALUES"]:
@@ -132,10 +113,7 @@ class ConfigLoader:
         except KeyError:
             logger.warning("No ENV_VALUES section found in configuration.")
 
-    
-    ### output config ###
-    
-    # retun all values as dictionary
     def to_dict(self) -> dict:
+        """Returns the flattened configuration dictionary."""
         self._config_keys = self._flatten_dict(self._config)
         return self._config_keys.copy()

@@ -4,10 +4,14 @@ import os
 
 
 def visualize_bounding_boxes(image_dir, boxes_dir, output_dir=None, show=True):
+    """
+    Draws bounding boxes on images based on JSON detection files.
+    Optionally saves and/or displays the visualized images.
+    """
     results = {}
     os.makedirs(output_dir, exist_ok=True) if output_dir else None
 
-    # Alle JSON-Dateien durchlaufen
+    # Iterate through all JSON detection files
     for file_name in os.listdir(boxes_dir):
         if not file_name.endswith("_boxes.json"):
             continue
@@ -20,7 +24,7 @@ def visualize_bounding_boxes(image_dir, boxes_dir, output_dir=None, show=True):
             print(f"⚠️ Kein passendes Bild gefunden für {file_name}")
             continue
 
-        # JSON-Datei laden
+        # Load bounding boxes from JSON
         json_path = os.path.join(boxes_dir, file_name)
         with open(json_path, "r", encoding="utf-8") as f:
             boxes = json.load(f)
@@ -28,7 +32,7 @@ def visualize_bounding_boxes(image_dir, boxes_dir, output_dir=None, show=True):
         image = Image.open(image_path).convert("RGB")
         draw = ImageDraw.Draw(image)
 
-        # Bounding Boxes einzeichnen
+        # Draw each bounding box
         for box in boxes:
             x1, y1, x2, y2 = box
             draw.rectangle([x1, y1, x2, y2], outline="red", width=3)

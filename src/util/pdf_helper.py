@@ -4,10 +4,9 @@ from loguru import logger
 from util.config_reader import ConfigLoader
 from pathlib import Path
 
-# Convert pdf files to images and save them in the target folder
 def pdfs_to_images(source_pdf_files: set, target_folder: str, dpi: int = 300) -> list[tuple[str, str]]:
+    """Converts PDF pages to images and saves them to the target folder."""
     os.makedirs(target_folder, exist_ok=True)
-
     image_paths = []
 
     if not source_pdf_files:
@@ -17,9 +16,8 @@ def pdfs_to_images(source_pdf_files: set, target_folder: str, dpi: int = 300) ->
         logger.info(f"ℹ️  Found pdf documents: {len(source_pdf_files)}. starting converison...")
 
     for pdf_file in source_pdf_files:
-        pdf_name = os.path.splitext(pdf_file)[0]
+        pdf_name = os.path.splitext(os.path.basename(pdf_file))[0]
         output_subfolder = os.path.join(target_folder, pdf_name)
-
         os.makedirs(output_subfolder, exist_ok=True)
 
         try:
@@ -35,8 +33,8 @@ def pdfs_to_images(source_pdf_files: set, target_folder: str, dpi: int = 300) ->
     
     return image_paths
 
-# Cache the created image paths along with their source PDF files
 def cache_image_creation(image_paths: list[tuple[str, str]], config: ConfigLoader) -> None:
+    """Caches the mapping between created images and their source PDFs."""
     cache_list = []
 
     for image_path, pdf_file in image_paths:
@@ -49,15 +47,18 @@ def cache_image_creation(image_paths: list[tuple[str, str]], config: ConfigLoade
         split=True
     )
 
-# Loades only the pdf file pahts, that are not chaced or outdated
 def load_cached_pdfs(pdf_paths: set[str], config: ConfigLoader) -> set[str]:
-
+    """
+    Checks for cached PDF conversions. 
+    Deletes orphaned images and removes up-to-date PDFs from the processing list.
+    """
     image_pdf_pairs = config._config.get("CACHE", {}).get("CONVERTED_IMAGES", {}).items()
     
     for image_path, pdf_path in image_pdf_pairs:
         image_file = Path(image_path)
         pdf_file = Path(pdf_path)
         
+        # Cleanup: Delete image if PDF is missing
         if (not pdf_file.exists()) and image_file.exists():
             try:
                 image_file.unlink()
@@ -70,6 +71,7 @@ def load_cached_pdfs(pdf_paths: set[str], config: ConfigLoader) -> set[str]:
             except Exception as e:
                 print(f"Error deleting image or directory: {e}")
 
+        # Skip processing if PDF is older than cached image
         if pdf_file.exists() and image_file.exists():
             try:
                 pdf_mtime = pdf_file.stat().st_mtime

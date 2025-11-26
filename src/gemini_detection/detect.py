@@ -11,6 +11,10 @@ from util.config_reader import ConfigLoader
 
 
 def detect_logical_blocks_with_gemini(image_paths: list[str], output_dir: str, config_loader: ConfigLoader, test_mode=False):
+    """
+    Uses Google Gemini to detect logical blocks (text, images, tables) in images.
+    Returns a dictionary of detected bounding boxes and saves them as JSON.
+    """
 
     load_dotenv()
     client = genai.Client()
@@ -45,9 +49,10 @@ def detect_logical_blocks_with_gemini(image_paths: list[str], output_dir: str, c
         models = config_loader.to_dict().get("CHAT_MODELS_GEMINI_MODELS", [])
         index = 0
 
+        # Try available Gemini models in order until one succeeds
         while response is None and index < len(models):
             try:
-                # Anfrage an Gemini senden
+                # Send request to Gemini
                 response = client.models.generate_content(
                     model=models[index],
                     contents=[image, prompt],
@@ -61,7 +66,7 @@ def detect_logical_blocks_with_gemini(image_paths: list[str], output_dir: str, c
             logger.error(f"❌ Alle Modelle fehlgeschlagen für Bild {image_path}. Überspringe...")
             continue
 
-        # Bounding Boxes auslesen
+        # Parse Bounding Boxes from JSON response
         try:
             bounding_boxes = json.loads(response.text)
         except json.JSONDecodeError:
@@ -71,6 +76,7 @@ def detect_logical_blocks_with_gemini(image_paths: list[str], output_dir: str, c
         width, height = image.size
         converted_bounding_boxes = []
 
+        # Convert normalized coordinates (0-1000) to absolute pixel coordinates
         for bbox in bounding_boxes:
             abs_y1 = int(bbox["box_2d"][0] / 1000 * height)
             abs_x1 = int(bbox["box_2d"][1] / 1000 * width)
@@ -78,7 +84,7 @@ def detect_logical_blocks_with_gemini(image_paths: list[str], output_dir: str, c
             abs_x2 = int(bbox["box_2d"][3] / 1000 * width)
             converted_bounding_boxes.append([abs_x1, abs_y1, abs_x2, abs_y2])
 
-        # Ergebnisse speichern
+        # Save results to JSON file
         base_name = os.path.basename(image_path)
         output_file = os.path.join(output_dir, f"{os.path.splitext(base_name)[0]}_boxes.json")
 
